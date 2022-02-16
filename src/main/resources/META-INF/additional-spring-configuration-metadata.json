@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "test.topic",
+      "type": "java.lang.String",
+      "description": "Description for test.topic."
+    },
+    {
+      "name": "spring.embedded.kafka.brokers",
+      "type": "java.lang.String",
+      "description": "Description for spring.embedded.kafka.brokers."
+    }
+  ] }
