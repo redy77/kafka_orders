@@ -10,4 +10,4 @@ spring:
     kafka:
       brokers: localhost:9092
 test:
-  topic: order
+  topic: New_order

@@ -16,7 +16,7 @@ public class KafkaConsumerService {
     }
 
 
-    @KafkaListener(topics = "order", groupId = "order", containerFactory = "concurrentKafkaListenerContainerFactory")
+    @KafkaListener(topics = "New_Order", groupId = "order", containerFactory = "concurrentKafkaListenerContainerFactory")
     public void listenOrder(@Payload Order order) {
         System.out.println("Order by client " + order.getClient().getName() + " was reserved");
         orders.add(order);
