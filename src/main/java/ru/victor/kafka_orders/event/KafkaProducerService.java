@@ -8,15 +8,17 @@ import org.springframework.util.concurrent.ListenableFutureCallback;
 import ru.victor.kafka_orders.models.Order;
 
 @Service
-public class KafkaProducer {
+public class KafkaProducerService {
 
     private final KafkaTemplate<String, Order> kafkaTemplate;
 
-    public KafkaProducer(KafkaTemplate<String, Order> kafkaTemplate) {
+
+    public KafkaProducerService(KafkaTemplate<String, Order> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
     public void sendToKafka(String topic, Order order) {
+
         ListenableFuture<SendResult<String, Order>> future = kafkaTemplate.send(topic, order);
         future.addCallback(new ListenableFutureCallback<>(){
 
@@ -24,7 +26,7 @@ public class KafkaProducer {
             public void onSuccess(SendResult<String, Order> result) {
                 System.out.println("Message was sent to topic: " + result.getRecordMetadata().topic() +
                         ", with offset: " + result.getRecordMetadata().offset() +
-                        ", at: " + result.getRecordMetadata().timestamp() + order.getClient().getName());
+                        ", at: " + result.getRecordMetadata().timestamp() + " " + result.getProducerRecord().value().getClient().getName());
             }
 
             @Override

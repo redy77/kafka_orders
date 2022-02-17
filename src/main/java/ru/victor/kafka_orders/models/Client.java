@@ -1,24 +1,17 @@
 package ru.victor.kafka_orders.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.util.Objects;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 public class Client implements Serializable {
     private String name;
     private double discount;
-
-    public Client(String name, double discount) {
-        this.name = name;
-        this.discount = discount;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public double getDiscount() {
-        return discount;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -33,11 +26,4 @@ public class Client implements Serializable {
         return Objects.hash(name, discount);
     }
 
-    @Override
-    public String toString() {
-        return "Client{" +
-                "name='" + name + '\'' +
-                ", discount=" + discount +
-                '}';
-    }
 }

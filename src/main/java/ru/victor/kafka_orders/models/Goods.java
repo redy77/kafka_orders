@@ -1,35 +1,31 @@
 package ru.victor.kafka_orders.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public class Goods {
-    String name;
-    BigDecimal price;
 
-    public Goods(String name, BigDecimal price) {
-        this.name = name;
-        this.price = price;
-    }
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+public class Goods {
+    String nameGood;
+    BigDecimal price;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Goods goods = (Goods) o;
-        return Objects.equals(name, goods.name) && Objects.equals(price, goods.price);
+        return Objects.equals(nameGood, goods.nameGood) && Objects.equals(price, goods.price);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, price);
+        return Objects.hash(nameGood, price);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
 }
