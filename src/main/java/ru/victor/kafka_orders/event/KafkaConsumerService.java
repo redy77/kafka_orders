@@ -15,28 +15,34 @@ public class KafkaConsumerService {
     private final KafkaProducerService producerService;
     private final Calculate bill;
     private final Set<Order> orders;
+    private final Set<Bill> bills;
 
     @Autowired
-    public KafkaConsumerService(KafkaProducerService producerService, Calculate orderAmount, Set<Order> orders) {
+    public KafkaConsumerService(KafkaProducerService producerService, Calculate orderAmount, Set<Order> orders, Set<Bill> bills) {
         this.producerService = producerService;
         this.bill = orderAmount;
         this.orders = orders;
+        this.bills = bills;
     }
 
-    @KafkaListener(topics = "New_Order", groupId = "order", containerFactory = "concurrentKafkaListenerContainerFactoryBill")
+    @KafkaListener(topics = "New_Order", containerFactory = "concurrentKafkaListenerContainerFactoryOrder")
     public void listenOrder(@Payload Order order) {
         System.out.println("Order by client " + order.getClient().getName() + " was reserved");
         orders.add(order);
         producerService.sendBillToKafka("Order_to_Pay", new Bill(order.getClient(), bill.clientBill(order)));
-        System.out.println(bill.clientBill(order).toString());
     }
 
-    @KafkaListener(topics = "Order_to_Pay", groupId = "order")
-    public void listenOrder(@Payload String bill) {
-        System.out.println("Order by client " + bill + " was reserved");
+    @KafkaListener(topics = "Order_to_Pay", containerFactory = "concurrentKafkaListenerContainerFactoryBill")
+    public void listenOrder(@Payload Bill bill) {
+        System.out.println("Order by client " + bill.getClient().getName() + " was reserved");
+        bills.add(bill);
     }
 
     public Set<Order> getOrders() {
         return orders;
+    }
+
+    public Set<Bill> getBills() {
+        return bills;
     }
 }

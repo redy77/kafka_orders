@@ -1,6 +1,7 @@
 package ru.victor.kafka_orders;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,6 +11,7 @@ import org.springframework.test.context.event.annotation.BeforeTestClass;
 import ru.victor.kafka_orders.Service.Calculate;
 import ru.victor.kafka_orders.event.KafkaConsumerService;
 import ru.victor.kafka_orders.event.KafkaProducerService;
+import ru.victor.kafka_orders.models.Bill;
 import ru.victor.kafka_orders.models.Client;
 import ru.victor.kafka_orders.models.Goods;
 import ru.victor.kafka_orders.models.Order;
@@ -25,6 +27,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9092"})
 class KafkaOrdersApplicationTests {
 
+    private static Order order;
+
+    private static Bill bill;
+
     @Autowired
     private Calculate calculate;
 
@@ -34,8 +40,8 @@ class KafkaOrdersApplicationTests {
     @Autowired
     private KafkaProducerService kafkaProducer;
 
-    @BeforeTestClass
-    public void sendKafka() throws InterruptedException {
+    @BeforeAll
+    static void objectsForSend(){
         Client client = new Client("Ivan", 0.15);
         Goods good1 = new Goods("Chips", BigDecimal.valueOf(2.5));
         Goods good2 = new Goods("Bear", BigDecimal.valueOf(3.5));
@@ -44,18 +50,30 @@ class KafkaOrdersApplicationTests {
         goods.add(good1);
         goods.add(good2);
         goods.add(good3);
-        Order order = Order.builder().goods(goods).client(client).build();
+        order = Order.builder().goods(goods).client(client).build();
+        bill = new Bill(client, BigDecimal.valueOf(3.225));
+    }
+
+    @BeforeTestClass
+    public void sendKafka() throws InterruptedException {
         kafkaProducer.sendOrderToKafka("New_Order", order);
         Thread.sleep(1000);
     }
 
     @Test
-    void sendAndReserveKafka() {
-        Assertions.assertNotNull(kafkaConsumer.getOrders());
+    void sendAndReserveOrderTest() throws InterruptedException {
+        sendKafka();
+        kafkaConsumer.getOrders().forEach(s -> Assertions.assertEquals("Ivan", s.getClient().getName()));
     }
 
     @Test
-    void getClientBill() {
-        kafkaConsumer.getOrders().forEach(s -> Assertions.assertEquals(calculate.clientBill(s), BigDecimal.valueOf(3.225)));
+    void calculateClassTest() throws InterruptedException {
+        sendKafka();
+        kafkaConsumer.getOrders().forEach(s -> Assertions.assertEquals(BigDecimal.valueOf(3.225), calculate.clientBill(s)));
+    }
+
+    @Test
+    void sendAndReserveBillTest(){
+        kafkaConsumer.getBills().forEach(s -> Assertions.assertEquals(bill, s));
     }
 }
