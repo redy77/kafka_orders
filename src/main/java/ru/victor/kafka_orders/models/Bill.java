@@ -12,18 +12,18 @@ import java.util.Objects;
 @Getter
 public class Bill {
     private Client client;
-    private BigDecimal bill;
+    private BigDecimal amount;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Bill bill1 = (Bill) o;
-        return Objects.equals(client, bill1.client) && Objects.equals(bill, bill1.bill);
+        return Objects.equals(client, bill1.client) && Objects.equals(amount, bill1.amount);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(client, bill);
+        return Objects.hash(client, amount);
     }
 }
