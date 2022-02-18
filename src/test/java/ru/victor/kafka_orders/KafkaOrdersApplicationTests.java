@@ -1,15 +1,13 @@
 package ru.victor.kafka_orders;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.event.annotation.BeforeTestClass;
-import ru.victor.kafka_orders.config.Service.OrderAmount;
+import ru.victor.kafka_orders.Service.Calculate;
 import ru.victor.kafka_orders.event.KafkaConsumerService;
 import ru.victor.kafka_orders.event.KafkaProducerService;
 import ru.victor.kafka_orders.models.Client;
@@ -28,7 +26,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 class KafkaOrdersApplicationTests {
 
     @Autowired
-    private OrderAmount orderAmount;
+    private Calculate calculate;
 
     @Autowired
     private KafkaConsumerService kafkaConsumer;
@@ -37,7 +35,7 @@ class KafkaOrdersApplicationTests {
     private KafkaProducerService kafkaProducer;
 
     @BeforeTestClass
-    void sendKafka() throws InterruptedException {
+    public void sendKafka() throws InterruptedException {
         Client client = new Client("Ivan", 0.15);
         Goods good1 = new Goods("Chips", BigDecimal.valueOf(2.5));
         Goods good2 = new Goods("Bear", BigDecimal.valueOf(3.5));
@@ -46,8 +44,8 @@ class KafkaOrdersApplicationTests {
         goods.add(good1);
         goods.add(good2);
         goods.add(good3);
-        Order order = new Order(client, goods);
-        kafkaProducer.sendToKafka("New_Order", order);
+        Order order = Order.builder().goods(goods).client(client).build();
+        kafkaProducer.sendOrderToKafka("New_Order", order);
         Thread.sleep(1000);
     }
 
@@ -57,7 +55,7 @@ class KafkaOrdersApplicationTests {
     }
 
     @Test
-    void getClientAmount() {
-        kafkaConsumer.getOrders().forEach(s -> Assertions.assertEquals(orderAmount.orderAmount(s), BigDecimal.valueOf(3.225)));
+    void getClientBill() {
+        kafkaConsumer.getOrders().forEach(s -> Assertions.assertEquals(calculate.clientBill(s), BigDecimal.valueOf(3.225)));
     }
 }

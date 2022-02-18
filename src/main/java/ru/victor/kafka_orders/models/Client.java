@@ -9,7 +9,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class Client implements Serializable {
+public class Client {
     private String name;
     private double discount;
 

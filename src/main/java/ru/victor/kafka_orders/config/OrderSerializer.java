@@ -28,7 +28,7 @@ public class OrderSerializer implements Serializer<Order> {
             System.out.println("Serializing...");
             return objectMapper.writeValueAsBytes(data);
         } catch (Exception e) {
-            throw new SerializationException("Error when serializing MessageDto to byte[]");
+            throw new SerializationException("Error when serializing Order to byte[]");
         }
     }
 
