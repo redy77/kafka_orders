@@ -65,7 +65,9 @@ class KafkaOrdersApplicationTests {
     @Test
     void sendAndReserveOrderTest() throws InterruptedException {
         sendKafka();
+        sendKafka();
         kafkaConsumer.getOrders().forEach(s -> Assertions.assertEquals("Ivan", s.getClient().getName()));
+        Assertions.assertEquals(2, kafkaConsumer.getOrders().size());
     }
 
     @Test

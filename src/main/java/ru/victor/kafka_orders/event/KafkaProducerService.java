@@ -16,8 +16,8 @@ public class KafkaProducerService {
     private final KafkaTemplate<String, Bill> kafkaTemplateBill;
 
 
-    public KafkaProducerService(@Qualifier("kafkaTemplateOrders") KafkaTemplate<String, Order> kafkaTemplate, @Qualifier("kafkaTemplateBill") KafkaTemplate<String, Bill> kafkaTemplateBill) {
-        this.kafkaTemplateOrder = kafkaTemplate;
+    public KafkaProducerService(KafkaTemplate<String, Order> kafkaTemplateOrder,  KafkaTemplate<String, Bill> kafkaTemplateBill) {
+        this.kafkaTemplateOrder = kafkaTemplateOrder;
         this.kafkaTemplateBill = kafkaTemplateBill;
     }
 

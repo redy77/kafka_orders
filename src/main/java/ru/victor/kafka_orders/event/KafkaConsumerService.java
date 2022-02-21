@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import ru.victor.kafka_orders.Service.Calculate;
 import ru.victor.kafka_orders.models.Bill;
 import ru.victor.kafka_orders.models.Order;
+
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -14,11 +16,11 @@ public class KafkaConsumerService {
 
     private final KafkaProducerService producerService;
     private final Calculate bill;
-    private final Set<Order> orders;
-    private final Set<Bill> bills;
+    private final List<Order> orders;
+    private final List<Bill> bills;
 
     @Autowired
-    public KafkaConsumerService(KafkaProducerService producerService, Calculate orderAmount, Set<Order> orders, Set<Bill> bills) {
+    public KafkaConsumerService(KafkaProducerService producerService, Calculate orderAmount, List<Order> orders, List<Bill> bills) {
         this.producerService = producerService;
         this.bill = orderAmount;
         this.orders = orders;
@@ -38,11 +40,11 @@ public class KafkaConsumerService {
         bills.add(bill);
     }
 
-    public Set<Order> getOrders() {
+    public List<Order> getOrders() {
         return orders;
     }
 
-    public Set<Bill> getBills() {
+    public List<Bill> getBills() {
         return bills;
     }
 }
