@@ -18,8 +18,8 @@ public class Bill {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Bill bill1 = (Bill) o;
-        return Objects.equals(client, bill1.client) && Objects.equals(amount, bill1.amount);
+        Bill bill = (Bill) o;
+        return Objects.equals(client, bill.client) && Objects.equals(amount, bill.amount);
     }
 
     @Override

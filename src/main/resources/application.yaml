@@ -1,13 +1,1 @@
 
-spring:
-  kafka:
-    consumer:
-      auto-offset-reset: earliest
-      group-id: order
-      enable-auto-commit: false
-
-  embedded:
-    kafka:
-      brokers: localhost:9092
-test:
-  topic: New_order

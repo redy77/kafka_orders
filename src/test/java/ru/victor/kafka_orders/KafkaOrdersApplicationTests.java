@@ -30,6 +30,7 @@ class KafkaOrdersApplicationTests {
     private static Order order;
 
     private static Bill bill;
+    private static Bill billNegative;
 
     @Autowired
     private Calculate calculate;
@@ -41,7 +42,7 @@ class KafkaOrdersApplicationTests {
     private KafkaProducerService kafkaProducer;
 
     @BeforeAll
-    static void objectsForSend(){
+    static void objectsForSend() {
         Client client = new Client("Ivan", 0.15);
         Goods good1 = new Goods("Chips", BigDecimal.valueOf(2.5));
         Goods good2 = new Goods("Bear", BigDecimal.valueOf(3.5));
@@ -52,6 +53,7 @@ class KafkaOrdersApplicationTests {
         goods.add(good3);
         order = Order.builder().goods(goods).client(client).build();
         bill = new Bill(client, BigDecimal.valueOf(3.225));
+        billNegative = new Bill(new Client("Dmitriy", 1.15), BigDecimal.valueOf(4.225));
     }
 
     @BeforeTestClass
@@ -73,7 +75,18 @@ class KafkaOrdersApplicationTests {
     }
 
     @Test
-    void sendAndReserveBillTest(){
+    void calculateClassNegativeTest() throws InterruptedException {
+        sendKafka();
+        kafkaConsumer.getOrders().forEach(s -> Assertions.assertNotEquals(BigDecimal.valueOf(4.225), calculate.clientBill(s)));
+    }
+
+    @Test
+    void sendAndReserveBillTest() {
         kafkaConsumer.getBills().forEach(s -> Assertions.assertEquals(bill, s));
+    }
+
+    @Test
+    void sendAndReserveBillNegativeTest() {
+        kafkaConsumer.getBills().forEach(s -> Assertions.assertNotEquals(billNegative, s));
     }
 }
