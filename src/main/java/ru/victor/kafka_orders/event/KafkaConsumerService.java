@@ -31,7 +31,7 @@ public class KafkaConsumerService {
 
     @KafkaListener(topics = "Clients", containerFactory = "concurrentKafkaListenerContainerFactoryClient")
     public void listenClient(@Payload Client client) {
-        System.out.println("Client was reserved " + client.getName() + " was reserved");
+        System.out.println("Client " + client.getName() + " was reserved");
         clients.put(client.getName(), client);
     }
 
@@ -44,7 +44,7 @@ public class KafkaConsumerService {
 
     @KafkaListener(topics = "Order_to_Pay", containerFactory = "concurrentKafkaListenerContainerFactoryBill")
     public void listenOrder(@Payload Bill bill) {
-        System.out.println("Order by client " + bill.getClient().getName() + " was reserved");
+        System.out.println("Order to pay by client " + bill.getClient().getName() + " was reserved");
         bills.put(bill.getClient().getName(), bill);
     }
 

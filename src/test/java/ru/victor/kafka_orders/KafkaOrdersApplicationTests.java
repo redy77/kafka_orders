@@ -21,7 +21,7 @@ import java.util.List;
 
 @SpringBootTest
 @DirtiesContext
-@EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9092"})
+@EmbeddedKafka(partitions = 3, brokerProperties = {"listeners=PLAINTEXT://localhost:9092"})
 class KafkaOrdersApplicationTests {
 
     private static Order order;
