@@ -12,8 +12,8 @@ import java.util.Objects;
 @AllArgsConstructor
 @Getter
 public class Goods {
-    String nameGood;
-    BigDecimal price;
+    private String nameGood;
+    private BigDecimal price;
 
     @Override
     public boolean equals(Object o) {

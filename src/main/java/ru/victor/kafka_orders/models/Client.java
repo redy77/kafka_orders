@@ -3,7 +3,6 @@ package ru.victor.kafka_orders.models;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import java.io.Serializable;
 import java.util.Objects;
 
 @NoArgsConstructor

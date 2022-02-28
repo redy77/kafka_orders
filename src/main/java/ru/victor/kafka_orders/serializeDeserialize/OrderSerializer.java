@@ -1,4 +1,4 @@
-package ru.victor.kafka_orders.config;
+package ru.victor.kafka_orders.serializeDeserialize;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.common.errors.SerializationException;

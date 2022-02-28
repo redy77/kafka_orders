@@ -6,10 +6,11 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 import ru.victor.kafka_orders.Service.Calculate;
 import ru.victor.kafka_orders.models.Bill;
+import ru.victor.kafka_orders.models.Client;
 import ru.victor.kafka_orders.models.Order;
-
+import java.util.Deque;
 import java.util.List;
-import java.util.Set;
+
 
 @Service
 public class KafkaConsumerService {
@@ -18,13 +19,21 @@ public class KafkaConsumerService {
     private final Calculate bill;
     private final List<Order> orders;
     private final List<Bill> bills;
+    private final Deque<Client> clients;
 
     @Autowired
-    public KafkaConsumerService(KafkaProducerService producerService, Calculate orderAmount, List<Order> orders, List<Bill> bills) {
+    public KafkaConsumerService(KafkaProducerService producerService, Calculate orderAmount, List<Order> orders, List<Bill> bills, Deque<Client> clients) {
         this.producerService = producerService;
         this.bill = orderAmount;
         this.orders = orders;
         this.bills = bills;
+        this.clients = clients;
+    }
+
+    @KafkaListener(topics = "Clients", containerFactory = "concurrentKafkaListenerContainerFactoryClient")
+    public void listenClient(@Payload Client client) {
+        System.out.println("Client was reserved " + client.getName() + " was reserved");
+        clients.add(client);
     }
 
     @KafkaListener(topics = "New_Order", containerFactory = "concurrentKafkaListenerContainerFactoryOrder")
@@ -46,5 +55,9 @@ public class KafkaConsumerService {
 
     public List<Bill> getBills() {
         return bills;
+    }
+
+    public Deque<Client> getClients() {
+        return clients;
     }
 }

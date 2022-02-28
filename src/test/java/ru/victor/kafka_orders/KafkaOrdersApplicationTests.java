@@ -15,12 +15,9 @@ import ru.victor.kafka_orders.models.Bill;
 import ru.victor.kafka_orders.models.Client;
 import ru.victor.kafka_orders.models.Goods;
 import ru.victor.kafka_orders.models.Order;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.hamcrest.MatcherAssert.assertThat;
 
 @SpringBootTest
 @DirtiesContext
@@ -28,7 +25,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 class KafkaOrdersApplicationTests {
 
     private static Order order;
-
+    private static Client client;
     private static Bill bill;
     private static Bill billNegative;
 
@@ -43,22 +40,23 @@ class KafkaOrdersApplicationTests {
 
     @BeforeAll
     static void objectsForSend() {
-        Client client = new Client("Ivan", 0.15);
-        Goods good1 = new Goods("Chips", BigDecimal.valueOf(2.5));
-        Goods good2 = new Goods("Bear", BigDecimal.valueOf(3.5));
-        Goods good3 = new Goods("Girls", BigDecimal.valueOf(15.5));
+        client = new Client( "Ivan", 0.15);
+        Goods good1 = new Goods( "Chips", BigDecimal.valueOf(2.5));
+        Goods good2 = new Goods( "Bear", BigDecimal.valueOf(3.5));
+        Goods good3 = new Goods( "Girls", BigDecimal.valueOf(15.5));
         List<Goods> goods = new ArrayList<>();
         goods.add(good1);
         goods.add(good2);
         goods.add(good3);
         order = Order.builder().goods(goods).client(client).build();
         bill = new Bill(client, BigDecimal.valueOf(3.225));
-        billNegative = new Bill(new Client("Dmitriy", 1.15), BigDecimal.valueOf(4.225));
+        billNegative = new Bill( new Client("Dmitriy", 1.15), BigDecimal.valueOf(4.225));
     }
 
     @BeforeTestClass
     public void sendKafka() throws InterruptedException {
         kafkaProducer.sendOrderToKafka("New_Order", order);
+        kafkaProducer.sendClientToKafka("Clients", client);
         Thread.sleep(1000);
     }
 
@@ -68,6 +66,13 @@ class KafkaOrdersApplicationTests {
         sendKafka();
         kafkaConsumer.getOrders().forEach(s -> Assertions.assertEquals("Ivan", s.getClient().getName()));
         Assertions.assertEquals(2, kafkaConsumer.getOrders().size());
+    }
+
+    @Test
+    void sendAndReserveClientTest() throws InterruptedException {
+        sendKafka();
+        System.out.println(kafkaConsumer.getClients());
+        Assertions.assertEquals("Ivan", kafkaConsumer.getClients().getLast().getName());
     }
 
     @Test
