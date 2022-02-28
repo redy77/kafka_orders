@@ -3,18 +3,22 @@ package ru.victor.kafka_orders;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.event.annotation.BeforeTestClass;
 import ru.victor.kafka_orders.Service.Calculate;
+import ru.victor.kafka_orders.controllers.Controllers;
 import ru.victor.kafka_orders.event.KafkaConsumerService;
 import ru.victor.kafka_orders.event.KafkaProducerService;
 import ru.victor.kafka_orders.models.Bill;
 import ru.victor.kafka_orders.models.Client;
 import ru.victor.kafka_orders.models.Goods;
 import ru.victor.kafka_orders.models.Order;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,17 +44,17 @@ class KafkaOrdersApplicationTests {
 
     @BeforeAll
     static void objectsForSend() {
-        client = new Client( "Ivan", 0.15);
-        Goods good1 = new Goods( "Chips", BigDecimal.valueOf(2.5));
-        Goods good2 = new Goods( "Bear", BigDecimal.valueOf(3.5));
-        Goods good3 = new Goods( "Girls", BigDecimal.valueOf(15.5));
+        client = new Client("Ivan", 0.15);
+        Goods good1 = new Goods("Chips", BigDecimal.valueOf(2.5));
+        Goods good2 = new Goods("Bear", BigDecimal.valueOf(3.5));
+        Goods good3 = new Goods("Girls", BigDecimal.valueOf(15.5));
         List<Goods> goods = new ArrayList<>();
         goods.add(good1);
         goods.add(good2);
         goods.add(good3);
         order = Order.builder().goods(goods).client(client).build();
         bill = new Bill(client, BigDecimal.valueOf(3.225));
-        billNegative = new Bill( new Client("Dmitriy", 1.15), BigDecimal.valueOf(4.225));
+        billNegative = new Bill(new Client("Dmitriy", 1.15), BigDecimal.valueOf(4.225));
     }
 
     @BeforeTestClass
@@ -63,37 +67,39 @@ class KafkaOrdersApplicationTests {
     @Test
     void sendAndReserveOrderTest() throws InterruptedException {
         sendKafka();
-        sendKafka();
-        kafkaConsumer.getOrders().forEach(s -> Assertions.assertEquals("Ivan", s.getClient().getName()));
-        Assertions.assertEquals(2, kafkaConsumer.getOrders().size());
+        Assertions.assertEquals("Ivan", kafkaConsumer.getOrders().get("Ivan").getClient().getName());
     }
 
     @Test
     void sendAndReserveClientTest() throws InterruptedException {
         sendKafka();
         System.out.println(kafkaConsumer.getClients());
-        Assertions.assertEquals("Ivan", kafkaConsumer.getClients().getLast().getName());
+        Assertions.assertEquals("Ivan", kafkaConsumer.getClients().get("Ivan").getName());
     }
 
     @Test
     void calculateClassTest() throws InterruptedException {
         sendKafka();
-        kafkaConsumer.getOrders().forEach(s -> Assertions.assertEquals(BigDecimal.valueOf(3.225), calculate.clientBill(s)));
+        Assertions.assertEquals(BigDecimal.valueOf(3.225), calculate.clientBill(kafkaConsumer.getOrders()
+                .get("Ivan")
+        ));
     }
 
     @Test
     void calculateClassNegativeTest() throws InterruptedException {
         sendKafka();
-        kafkaConsumer.getOrders().forEach(s -> Assertions.assertNotEquals(BigDecimal.valueOf(4.225), calculate.clientBill(s)));
+        Assertions.assertNotEquals(BigDecimal.valueOf(4.225), calculate.clientBill(kafkaConsumer.getOrders()
+                .get("Ivan")
+        ));
     }
 
     @Test
     void sendAndReserveBillTest() {
-        kafkaConsumer.getBills().forEach(s -> Assertions.assertEquals(bill, s));
+        Assertions.assertEquals(bill, kafkaConsumer.getBills().get("Ivan"));
     }
 
     @Test
     void sendAndReserveBillNegativeTest() {
-        kafkaConsumer.getBills().forEach(s -> Assertions.assertNotEquals(billNegative, s));
+        Assertions.assertNotEquals(billNegative, kafkaConsumer.getBills().get("Ivan"));
     }
 }

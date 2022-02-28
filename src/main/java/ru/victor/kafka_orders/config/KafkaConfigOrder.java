@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
+import ru.victor.kafka_orders.models.Client;
 import ru.victor.kafka_orders.models.Order;
 import ru.victor.kafka_orders.serializeDeserialize.OrderDeserializer;
 import ru.victor.kafka_orders.serializeDeserialize.OrderSerializer;
@@ -24,6 +25,11 @@ public class KafkaConfigOrder {
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, OrderSerializer.class);
         return new DefaultKafkaProducerFactory<>(config);
+    }
+
+    @Bean
+    public HashMap<String, Order> getOrdersMap(){
+        return new HashMap<>();
     }
 
     @Bean

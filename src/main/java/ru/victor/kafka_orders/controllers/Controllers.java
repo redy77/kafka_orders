@@ -3,10 +3,7 @@ package ru.victor.kafka_orders.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.victor.kafka_orders.Service.Calculate;
 import ru.victor.kafka_orders.event.KafkaConsumerService;
 import ru.victor.kafka_orders.event.KafkaProducerService;
@@ -27,23 +24,23 @@ public class Controllers {
         this.consumerService = consumerService;
         this.calculate = calculate;
     }
-    @GetMapping("/client")
-    public void getClient(@RequestBody Client client){
-        producerService.sendClientToKafka("Clients", client);
-        Client newClient = consumerService.getClients().getLast();
-
+    @GetMapping("/client/{name}")
+    public ResponseEntity<Client> getClient(@PathVariable String name){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(consumerService.getClients().get(name));
     }
 
 
     @PostMapping("/client")
     public ResponseEntity<Client> newClient(@RequestBody Client client){
         producerService.sendClientToKafka("Clients", client);
-        Client newClient = consumerService.getClients().getLast();
+        Client newClient = consumerService.getClients().get(client.getName());
         if(!client.equals(newClient)) return ResponseEntity
                 .status(HttpStatus.SERVICE_UNAVAILABLE)
                 .body(null);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(consumerService.getClients().getLast());
+                .body(newClient);
     }
 }

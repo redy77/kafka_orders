@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
 import ru.victor.kafka_orders.models.Bill;
+import ru.victor.kafka_orders.models.Client;
 import ru.victor.kafka_orders.serializeDeserialize.BillDeserializer;
 import ru.victor.kafka_orders.serializeDeserialize.BillSerialize;
 
@@ -23,6 +24,10 @@ public class KafkaConfigBill {
         return new KafkaTemplate<>(producerFactoryBill());
     }
 
+    @Bean
+    public HashMap<String, Bill> getBillsMap(){
+        return new HashMap<>();
+    }
 
     @Bean
     public ProducerFactory<String, Bill> producerFactoryBill() {

@@ -25,8 +25,8 @@ public class KafkaConfigClient {
     }
 
     @Bean
-    public Deque<Client> getDeque(){
-        return new ArrayDeque<>();
+    public HashMap<String, Client> getClientsMap(){
+        return new HashMap<>();
     }
 
     @Bean
