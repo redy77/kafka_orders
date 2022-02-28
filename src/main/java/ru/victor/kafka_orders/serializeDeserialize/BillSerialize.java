@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.Serializer;
 import ru.victor.kafka_orders.models.Bill;
-import ru.victor.kafka_orders.models.Order;
 
 public class BillSerialize implements Serializer<Bill> {
 

@@ -8,9 +8,7 @@ import ru.victor.kafka_orders.Service.Calculate;
 import ru.victor.kafka_orders.models.Bill;
 import ru.victor.kafka_orders.models.Client;
 import ru.victor.kafka_orders.models.Order;
-import java.util.Deque;
 import java.util.HashMap;
-import java.util.List;
 
 
 @Service

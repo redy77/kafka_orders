@@ -6,7 +6,6 @@ import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.springframework.stereotype.Component;
 import ru.victor.kafka_orders.models.Order;
-
 import java.nio.charset.StandardCharsets;
 
 @Component
